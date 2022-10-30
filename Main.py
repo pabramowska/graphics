@@ -87,7 +87,7 @@ while True:
         connect_points(5, 6, projected_points)
         connect_points(6, 7, projected_points)
         connect_points(7, 4, projected_points)
-#łączenie podstaw
+#łączenie podstaw prostopadłościanów
         connect_points(1,5,projected_points)
         connect_points(3,7,projected_points)
         connect_points(2, 6, projected_points)

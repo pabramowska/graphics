@@ -5,7 +5,7 @@ surface = pygame.display.set_mode((1200,800))
 white = (255,255,255)
 black=(0,0,0)
 #lokalizacja prostopadłościanów w układzie współrzędnych
-locations = [[250,425],[50,400]]
+locations = [[250,400],[550,400]]
 
 
 def cube(start, size_base, size_height):

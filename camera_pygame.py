@@ -1,8 +1,11 @@
 import pygame
 
 pygame.init()
-surface = pygame.display.set_mode((800,600))
+surface = pygame.display.set_mode((1200,800))
 white = (255,255,255)
+black=(0,0,0)
+#lokalizacja prostopadłościanów w układzie współrzędnych
+locations = [[250,425],[50,400]]
 
 
 def cube(start, size_base, size_height):
@@ -39,17 +42,32 @@ def cube(start, size_base, size_height):
     pygame.draw.line(surface, white, (point_3),(point_7))
     pygame.draw.line(surface, white, (point_4),(point_8))
 
-cube([250,225],70,100)
-cube([50,200],70,100)
+
 
 game_on=True
+current_status=0
+
 while game_on:
+    # obsługa klawiatury
     for event in pygame.event.get():
-        #sychodzenie z programu
         if event.type == pygame.QUIT:
             game_on = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 game_on = False
+            elif event.key == pygame.K_RIGHT:
+                current_status = -1
+            elif event.key == pygame.K_LEFT:
+                current_status = 1
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                current_status = 0
 
+    for location in locations:
+        location[0] += current_status
+
+    #rysowanie prostopadłościanów
+    surface.fill(black)
+    cube(locations[0], 70, 100)
+    cube(locations[1], 70, 100)
     pygame.display.update()

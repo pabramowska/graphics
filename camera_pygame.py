@@ -13,6 +13,7 @@ surface = pygame.display.set_mode(surface_size)
 white = (255,255,255)
 black=(0,0,0)
 #lokalizacja prostopadłościanów w układzie współrzędnych
+
 locations = [[250,400],[550,400]]
 size = [70, 100]
 scale = 1
@@ -30,6 +31,7 @@ def cube(location, size, scale):
     point_3 = [(location[0])*scale, (location[1]+size_height)*scale]
     point_4 = [(location[0]+ size_base)*scale, (location[1]+size_height)*scale]
 
+
     # linie łączące pierwszy prostokąt
     pygame.draw.line(surface, white, (point_1),(point_2))
     pygame.draw.line(surface, white, (point_3),(point_4))
@@ -37,6 +39,7 @@ def cube(location, size, scale):
     pygame.draw.line(surface, white, (point_1),(point_3))
 
     #drugi prostokąt
+
     base_change = size_base//2
     #base_change = (location[0] - (surface_size[0]//4))
     height_change = size_height//2
@@ -45,6 +48,7 @@ def cube(location, size, scale):
     point_6 = [(point_2[0] + base_change)*scale, (point_2[1] - height_change)*scale]
     point_7 = [(point_3[0] + base_change)*scale, (point_3[1] - height_change)*scale]
     point_8 = [(point_4[0] + base_change)*scale, (point_4[1] - height_change)*scale]
+
 
     #linie łączące pierwszy prostokąt
     pygame.draw.line(surface, white, (point_5),(point_6))
@@ -62,12 +66,14 @@ def cube(location, size, scale):
 
 game_on=True
 current_status=0
+
 y_move = 0
 scale_change = 0
 current_size = size
 z_status = 0
 z_location = 1
 print(current_size)
+
 
 while game_on:
     # obsługa klawiatury
@@ -78,6 +84,7 @@ while game_on:
             if event.key == pygame.K_ESCAPE:
                 game_on = False
             elif event.key == pygame.K_RIGHT:
+
                 current_status = -0.3
             elif event.key == pygame.K_LEFT:
                 current_status = 0.3
@@ -101,4 +108,5 @@ while game_on:
     surface.fill(black)
     cube(locations[0],current_size,scale)
     cube(locations[1], current_size,scale)
+
     pygame.display.update()

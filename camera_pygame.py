@@ -3,12 +3,13 @@ to do:
 -naprawić skalę (zoom)
 -dodać obrót wokół osi
 -dodać róch do przodu
--róch góra-dół """
+"""
 
 import pygame
 
 pygame.init()
-surface = pygame.display.set_mode((1200,800))
+surface_size = (1200,800)
+surface = pygame.display.set_mode(surface_size)
 white = (255,255,255)
 black=(0,0,0)
 #lokalizacja prostopadłościanów w układzie współrzędnych
@@ -36,12 +37,14 @@ def cube(location, size, scale):
     pygame.draw.line(surface, white, (point_1),(point_3))
 
     #drugi prostokąt
-    shift_base = size_base//2
-    shift_height = size_height//2
-    point_5 = [(point_1[0] + shift_base)*scale, (point_1[1] - shift_height)*scale]
-    point_6 = [(point_2[0] + shift_base)*scale, (point_2[1] - shift_height)*scale]
-    point_7 = [(point_3[0] + shift_base)*scale, (point_3[1] - shift_height)*scale]
-    point_8 = [(point_4[0] + shift_base)*scale, (point_4[1] - shift_height)*scale]
+    #base_change = size_base//2
+    base_change = (location[0] - (surface_size[0]//4))
+    #height_change = size_height//2
+    height_change = (location[1] - (surface_size[1]//4))
+    point_5 = [(point_1[0] + base_change)*scale, (point_1[1] - height_change)*scale]
+    point_6 = [(point_2[0] + base_change)*scale, (point_2[1] - height_change)*scale]
+    point_7 = [(point_3[0] + base_change)*scale, (point_3[1] - height_change)*scale]
+    point_8 = [(point_4[0] + base_change)*scale, (point_4[1] - height_change)*scale]
 
     #linie łączące pierwszy prostokąt
     pygame.draw.line(surface, white, (point_5),(point_6))

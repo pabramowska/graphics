@@ -37,10 +37,10 @@ def cube(location, size, scale):
     pygame.draw.line(surface, white, (point_1),(point_3))
 
     #drugi prostokąt
-    #base_change = size_base//2
-    base_change = (location[0] - (surface_size[0]//4))
-    #height_change = size_height//2
-    height_change = (location[1] - (surface_size[1]//4))
+    base_change = size_base//2
+    #base_change = (location[0] - (surface_size[0]//4))
+    height_change = size_height//2
+   # height_change = (location[1] - (surface_size[1]//4))
     point_5 = [(point_1[0] + base_change)*scale, (point_1[1] - height_change)*scale]
     point_6 = [(point_2[0] + base_change)*scale, (point_2[1] - height_change)*scale]
     point_7 = [(point_3[0] + base_change)*scale, (point_3[1] - height_change)*scale]

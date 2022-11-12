@@ -10,7 +10,7 @@ import pygame
 pygame.init()
 surface_size = (1200,800)
 surface = pygame.display.set_mode(surface_size)
-white = (255,255,255)
+white = (255,20,147)
 black=(0,0,0)
 #lokalizacja prostopadłościanów w układzie współrzędnych
 locations = [[250,400],[550,400]]

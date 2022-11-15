@@ -46,6 +46,8 @@ def cube(location, size, scale):
     point_7 = [(point_3[0] + base_change)*scale, (point_3[1] - height_change)*scale]
     point_8 = [(point_4[0] + base_change)*scale, (point_4[1] - height_change)*scale]
 
+    print(point_1,point_2,point_3,point_4,point_5,point_6,point_7,point_8)
+
     #linie łączące pierwszy prostokąt
     pygame.draw.line(surface, white, (point_5),(point_6))
     pygame.draw.line(surface, white, (point_7),(point_8))
@@ -99,6 +101,6 @@ while game_on:
 
     #rysowanie prostopadłościanów
     surface.fill(black)
-    cube(locations[0],current_size,scale)
-    cube(locations[1], current_size,scale)
+    cube(locations[0],current_size,1)
+    cube(locations[1], current_size,1)
     pygame.display.update()

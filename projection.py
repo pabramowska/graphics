@@ -11,21 +11,21 @@ blue = (65,105,225)
 pink = (255,20,147)
 
 #współrzędne obiektów
-location_first = np.array([[550, 400, 100], [620, 400,100], [550, 500,100], [620, 500,100],[550, 400, 100], [620, 400,100], [550, 500,100], [620, 500,100]])
-location_second = np.array([[250, 400, 100], [320, 400, 100], [250, 500, 100], [320, 500, 100], [250, 400, 0], [320, 400, 0], [250, 500, 0], [320, 500, 0]])
+location_first = np.array([[550, 400, 0], [620, 400,0], [550, 500,0], [620, 500,0],[550, 400, 1.1], [620, 400,1.1], [550, 500,1.1], [620, 500,1.1]])
+location_second = np.array([[250, 400, 0], [320, 400, 0], [250, 500, 0], [320, 500, 0], [250, 400, 1.1], [320, 400, 1.1], [250, 500, 1.1], [320, 500, 1.1]])
 
 #macierz rzutowania
-near = 0.1
-far = 1000
+z_min = 0.1
+z_max = 1000
 field_of_view = 90
 aspect_ratio = surface_size[1]/surface_size[0]
 field_of_view_rad = 1/np.tan(np.deg2rad(field_of_view/2))
 projection_matrix = np.array([[0.0,0.0,0.0,0.0] for _ in range(4)])
 projection_matrix[0][0] = aspect_ratio * field_of_view_rad
 projection_matrix[1][1] = field_of_view_rad
-projection_matrix[2][2] = far/(far-near)
+projection_matrix[2][2] = z_max/(z_max-z_min)
 projection_matrix[2][3] = 1
-projection_matrix[3][2] = (-far*near)/(far-near)
+projection_matrix[3][2] = (-z_max*z_min)/(z_max-z_min)
 
 def multiplyVector(vector, matrix):
 
@@ -42,6 +42,19 @@ def multiplyVector(vector, matrix):
 
     return result_vecor
 
+
+def projectCoordinates(coordinates):
+    vector_list = []
+
+    for vector in coordinates:
+        vector_list.append(multiplyVector(vector,projection_matrix))
+    return np.array(vector_list)
+
+
+def move_object(coordinates, x_move, y_move):
+    for vector in coordinates:
+        vector[0] += x_move
+        vector[1] += y_move
 
 def drawObject(coordinates,color):
 
@@ -63,6 +76,9 @@ def drawObject(coordinates,color):
     pygame.draw.line(surface, color, (coordinates[2][0], coordinates[2][1]), (coordinates[6][0], coordinates[6][1]))
     pygame.draw.line(surface, color, (coordinates[3][0], coordinates[3][1]), (coordinates[7][0], coordinates[7][1]))
 
+location_first_projected = projectCoordinates(location_first)
+location_second_projected = projectCoordinates(location_second)
+x_move, y_move = 0,0
 game_on=True
 while game_on:
     # obsługa klawiatury
@@ -72,7 +88,25 @@ while game_on:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 game_on = False
+            elif event.key == pygame.K_RIGHT:
+                x_move = -1
+            elif event.key == pygame.K_LEFT:
+                x_move = 1
+            elif event.key == pygame.K_UP:
+                y_move = 1
+            elif event.key == pygame.K_DOWN:
+                y_move = -1
+
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                x_move = 0
+            if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
+                y_move = 0
+
+    move_object(location_first_projected,x_move,y_move)
+    move_object(location_second_projected, x_move, y_move)
+    
     surface.fill(black)
-    drawObject(location_first,pink)
-    drawObject(location_second, blue)
+    drawObject(location_first_projected,pink)
+    drawObject(location_second_projected, blue)
     pygame.display.update()

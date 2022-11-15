@@ -63,7 +63,7 @@ def cube(location, size, scale):
 
 
 game_on=True
-current_status=0
+x_move=0
 y_move = 0
 scale_change = 0
 current_size = size
@@ -80,9 +80,9 @@ while game_on:
             if event.key == pygame.K_ESCAPE:
                 game_on = False
             elif event.key == pygame.K_RIGHT:
-                current_status = -0.3
+                x_move = -0.3
             elif event.key == pygame.K_LEFT:
-                current_status = 0.3
+                x_move = 0.3
             elif event.key == pygame.K_UP:
                 y_move = 0.3
             elif event.key == pygame.K_DOWN:
@@ -90,12 +90,12 @@ while game_on:
 
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                current_status= 0
+                x_move= 0
             if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
                 y_move= 0
 
     for location in locations:
-        location[0] += current_status
+        location[0] += x_move
         location[1] += y_move
     # scale+=scale_change
 

@@ -52,6 +52,20 @@ def move(coordinates, x_move, y_move):
         vector[1]+=y_move
     return coordinates
 
+def rotate_ox(coordinates, theta):
+    rotate_x_matrix = np.array([[0.0,0.0,0.0,0.0] for _ in range(4)])
+    rotate_x_matrix[0][0] = 1.0
+    rotate_x_matrix[1][1] = np.cos(theta*0.5)
+    rotate_x_matrix[1][2] = np.sin(theta * 0.5)
+    rotate_x_matrix[2][1] = -np.sin(theta * 0.5)
+    rotate_x_matrix[2][2] = np.cos(theta * 0.5)
+    rotate_x_matrix[3][3] = 1.0
+
+    new_list = []
+    for vector in coordinates:
+        new_list.append(multiply_vector(vector, rotate_x_matrix))
+    return np.array(new_list)
+
 def draw(coordinates,color):
 
     #pierwszy prostokąt
@@ -72,9 +86,9 @@ def draw(coordinates,color):
     pygame.draw.line(surface, color, (coordinates[2][0], coordinates[2][1]), (coordinates[6][0], coordinates[6][1]))
     pygame.draw.line(surface, color, (coordinates[3][0], coordinates[3][1]), (coordinates[7][0], coordinates[7][1]))
 
-location_first_projected = project(location_first)
-location_second_projected = project(location_second)
-x_move, y_move, z_move = 0,0,0
+
+x_move, y_move = 0,0
+rot_x=0
 game_on=True
 
 while game_on:
@@ -94,17 +108,20 @@ while game_on:
                 y_move = 1
             elif event.key == pygame.K_DOWN:
                 y_move = -1
-
+            elif event.key == pygame.K_LESS:
+                rot_x += 100
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 x_move = 0
             if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
                 y_move = 0
 
-    moved_first = move(location_first_projected, x_move, y_move)
-    moved_second = move(location_second_projected, x_move, y_move)
-
+    moved_first = move(location_first, x_move, y_move)
+    moved_second = move(location_second, x_move, y_move)
+    rot_first = rotate_ox(moved_first, rot_x)
+    location_first_projected = project(rot_first)
+    location_second_projected = project(moved_second)
     surface.fill(black)
-    draw(moved_first,pink)
-    draw(moved_second, blue)
+    draw(location_first_projected,pink)
+    draw(location_second_projected, blue)
     pygame.display.update()

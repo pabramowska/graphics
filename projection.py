@@ -6,7 +6,7 @@ surface_size = (1200,800)
 surface = pygame.display.set_mode(surface_size)
 
 white = (255,255,255)
-black=(0,0,0)
+black = (0,0,0)
 blue = (65,105,225)
 pink = (255,20,147)
 
@@ -27,36 +27,32 @@ projection_matrix[2][2] = z_max/(z_max-z_min)
 projection_matrix[2][3] = 1
 projection_matrix[3][2] = (-z_max*z_min)/(z_max-z_min)
 
-def multiplyVector(vector, matrix):
-
-    result_vecor = np.array([0,0,0])
-    result_vecor[0] = vector[0]*matrix[0][0] + vector[1]*matrix[1][0] + vector[2]*matrix[2][0]+ matrix[3][0]
+def multiply_vector(vector, matrix):
+    result_vecor = np.array([0.0,0.0,0.0])
+    result_vecor[0] = (vector[0]*matrix[0][0]) + (vector[1]*matrix[1][0]) + (vector[2]*matrix[2][0])+ (matrix[3][0])
     result_vecor[1] = vector[0] * matrix[0][1] + vector[1] * matrix[1][1] + vector[2] * matrix[2][1] + matrix[3][1]
     result_vecor[2] = vector[0] * matrix[0][2] + vector[1] * matrix[1][2] + vector[2] * matrix[2][2] + matrix[3][2]
     n = vector[0] * matrix[0][3] + vector[1] * matrix[1][3] + vector[2] * matrix[2][3] + matrix[3][3]
 
     if(n!=0):
-        result_vecor[0] /= n
-        result_vecor[1] /= n
-        result_vecor[2] /= n
-
+        result_vecor /= n
     return result_vecor
 
 
-def projectCoordinates(coordinates):
+def project(coordinates):
     vector_list = []
-
     for vector in coordinates:
-        vector_list.append(multiplyVector(vector,projection_matrix))
+        vector_list.append(multiply_vector(vector,projection_matrix))
     return np.array(vector_list)
 
 
-def move_object(coordinates, x_move, y_move):
+def move(coordinates, x_move, y_move):
     for vector in coordinates:
-        vector[0] += x_move
-        vector[1] += y_move
+        vector[0]+=x_move
+        vector[1]+=y_move
+    return coordinates
 
-def drawObject(coordinates,color):
+def draw(coordinates,color):
 
     #pierwszy prostokąt
     pygame.draw.line(surface, color, (coordinates[0][0], coordinates[0][1]),(coordinates[1][0], coordinates[1][1]))
@@ -76,11 +72,13 @@ def drawObject(coordinates,color):
     pygame.draw.line(surface, color, (coordinates[2][0], coordinates[2][1]), (coordinates[6][0], coordinates[6][1]))
     pygame.draw.line(surface, color, (coordinates[3][0], coordinates[3][1]), (coordinates[7][0], coordinates[7][1]))
 
-location_first_projected = projectCoordinates(location_first)
-location_second_projected = projectCoordinates(location_second)
-x_move, y_move = 0,0
+location_first_projected = project(location_first)
+location_second_projected = project(location_second)
+x_move, y_move, z_move = 0,0,0
 game_on=True
+
 while game_on:
+
     # obsługa klawiatury
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -103,10 +101,10 @@ while game_on:
             if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
                 y_move = 0
 
-    move_object(location_first_projected,x_move,y_move)
-    move_object(location_second_projected, x_move, y_move)
-    
+    moved_first = move(location_first_projected, x_move, y_move)
+    moved_second = move(location_second_projected, x_move, y_move)
+
     surface.fill(black)
-    drawObject(location_first_projected,pink)
-    drawObject(location_second_projected, blue)
+    draw(moved_first,pink)
+    draw(moved_second, blue)
     pygame.display.update()

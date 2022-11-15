@@ -27,6 +27,67 @@ projection_matrix[2][2] = z_max/(z_max-z_min)
 projection_matrix[2][3] = 1
 projection_matrix[3][2] = (-z_max*z_min)/(z_max-z_min)
 
+def normalize(vector):
+    return vector/len(vector)
+
+def matrix_point_at(pos, target, up):
+    #kierunek do przodu
+    new_froward = target-pos
+    new_froward = normalize(new_froward)
+
+    #kierunek do góry
+    a = new_froward * sum(up*new_froward)
+    new_up = up - a
+    new_up = normalize(new_up)
+
+    #kierunek w prawo
+    new_right = np.cross(new_up, new_froward)
+
+    #macierz kierunkowa
+    dimension_matrix = np.array([0.0,0.0,0.0] for _ in range(4))
+    dimension_matrix[0][0] = new_right[0]
+    dimension_matrix[0][1] = new_right[1]
+    dimension_matrix[0][2] = new_right[2]
+    dimension_matrix[0][3] = 0.0
+    dimension_matrix[1][0] = new_up[0]
+    dimension_matrix[1][1] = new_up[1]
+    dimension_matrix[1][2] = new_up[2]
+    dimension_matrix[1][3] = 0.0
+    dimension_matrix[2][0] = new_froward[0]
+    dimension_matrix[2][1] = new_froward[1]
+    dimension_matrix[2][2] = new_froward[2]
+    dimension_matrix[2][3] = 0.0
+    dimension_matrix[3][0] = pos[0]
+    dimension_matrix[3][1] = pos[1]
+    dimension_matrix[3][2] = pos[2]
+    dimension_matrix[3][3] = 0.0
+
+    return dimension_matrix
+
+def inverse(matrix):
+    new_matrix = np.array([0.0,0.0,0.0] for _ in range(4))
+    new_matrix[0][0] = matrix[0][0]
+    new_matrix[0][1] = matrix[1][0]
+    new_matrix[0][2] = matrix[2][0]
+    new_matrix[0][3] = 0.0
+    
+    new_matrix[1][0] = matrix[0][1]
+    new_matrix[1][1] = matrix[1][1]
+    new_matrix[1][2] = matrix[2][1]
+    new_matrix[1][3] = 0.0
+    
+    new_matrix[2][0] = matrix[0][2]
+    new_matrix[2][1] = matrix[1][2]
+    new_matrix[2][2] = matrix[2][2]
+    new_matrix[2][3] = 0.0
+    
+    new_matrix[3][0] = -(matrix[3][0] * new_matrix[0][0] + matrix[3][1] * new_matrix[1][0] + matrix[3][2] * new_matrix[2][0])
+    new_matrix[3][1] = -(matrix[3][0] * new_matrix[0][1] + matrix[3][1] * new_matrix[1][1] + matrix[3][2] * new_matrix[2][1])
+    new_matrix[3][2] = -(matrix[3][0] * new_matrix[0][2] + matrix[3][1] * new_matrix[1][2] + matrix[3][2] * new_matrix[2][2])
+    new_matrix[3][3] = 1.0
+
+    return new_matrix
+
 def multiply_vector(vector, matrix):
     result_vecor = np.array([0.0,0.0,0.0])
     result_vecor[0] = (vector[0]*matrix[0][0]) + (vector[1]*matrix[1][0]) + (vector[2]*matrix[2][0])+ (matrix[3][0])

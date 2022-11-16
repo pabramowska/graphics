@@ -70,7 +70,6 @@ def rotate(coordinates, theta):
     for vector in coordinates:
         rotated.append(np.matmul(np.append(vector,1),moy))
     rotated = np.array(rotated)
-    rotated[:,2]
     return rotated
 
 def draw(coordinates,color):

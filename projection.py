@@ -2,7 +2,7 @@ import numpy as np
 import pygame
 
 pygame.init()
-surface_size = (1200,800)
+surface_size = (1200,1000)
 surface = pygame.display.set_mode(surface_size)
 
 white = (255,255,255)
@@ -13,24 +13,10 @@ yellow = (255,255,153)
 green = (0,255,0)
 
 #współrzędne obiektów
-location_first_front = np.array([[519, 400, 1.5], [589, 400,1.5], [519, 500,1.5], [589, 500,1.5],[519, 400, 1.6], [589, 400,1.6], [519, 500,1.6], [589, 500,1.6]])
-location_first_back = np.array([[520, 400, 1.2], [590, 400,1.2], [520, 500,1.2], [590, 500,1.2],[520, 400, 1.3], [590, 400,1.3], [520, 500,1.3], [590, 500,1.3]])
-location_second_front = np.array([[709, 400,1.5], [779, 400, 1.5], [709, 500, 1.5], [779, 500, 1.5], [709, 400, 1.6], [779, 400, 1.6], [709, 500, 1.6], [779, 500, 1.6]])
-location_second_back = np.array([[710, 400, 1.2], [780, 400, 1.2], [710, 500, 1.2], [780, 500, 1.2], [710, 400, 1.3], [780, 400, 1.3], [710, 500, 1.3], [780, 500, 1.3]])
-
-#macierz rzutowania
-z_min = 0.1
-d=0.1
-z_max = 1000
-field_of_view = 90
-aspect_ratio = surface_size[1]/surface_size[0]
-field_of_view_rad = 1/np.tan(np.deg2rad(field_of_view/2))
-projection_matrix = np.array([[0.0,0.0,0.0,0.0] for _ in range(4)])
-projection_matrix[0][0] = aspect_ratio * field_of_view_rad
-projection_matrix[1][1] = field_of_view_rad
-projection_matrix[2][2] = z_max/(z_max-z_min)
-projection_matrix[2][3] = 1
-projection_matrix[3][2] = (-z_max*z_min)/(z_max-z_min)
+location_first_front = np.array([[519, 600, 1.5], [589, 600,1.5], [519, 700,1.5], [589, 700,1.5],[519, 600, 1.6], [589, 600,1.6], [519, 700,1.6], [589, 700,1.6]])
+location_first_back = np.array([[520, 600, 1.2], [590, 600,1.2], [520, 700,1.2], [590, 700,1.2],[520, 600, 1.3], [590, 600,1.3], [520, 700,1.3], [590, 700,1.3]])
+location_second_front = np.array([[709, 600,1.5], [779, 600, 1.5], [709, 700, 1.5], [779, 700, 1.5], [709, 600, 1.6], [779, 600, 1.6], [709, 700, 1.6], [779, 700, 1.6]])
+location_second_back = np.array([[710, 600, 1.2], [780, 600, 1.2], [710, 700, 1.2], [780, 700, 1.2], [710, 600, 1.3], [780, 600, 1.3], [710, 700, 1.3], [780, 700, 1.3]])
 
 
 def multiply_vector_normalized(vector, matrix):
@@ -42,7 +28,21 @@ def multiply_vector_normalized(vector, matrix):
 
 
 def project(coordinates):
+
+    # macierz rzutowania
+    z_min = 0.1
+    z_max = 1000
+    field_of_view =  95
+    aspect_ratio = surface_size[1] / surface_size[0]
+    field_of_view_rad = 1 / np.tan(np.deg2rad(field_of_view / 2))
+    projection_matrix = np.array([[0.0, 0.0, 0.0, 0.0] for _ in range(4)])
+    projection_matrix[0][0] = aspect_ratio * field_of_view_rad
+    projection_matrix[1][1] = field_of_view_rad
+    projection_matrix[2][2] = z_max / (z_max - z_min)
+    projection_matrix[2][3] = 1
+    projection_matrix[3][2] = (-z_max * z_min) / (z_max - z_min)
     vector_list = []
+
     for vector in coordinates:
         vector_list.append(multiply_vector_normalized(vector,projection_matrix))
     return np.array(vector_list)

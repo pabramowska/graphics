@@ -48,7 +48,7 @@ def project(coordinates):
     return np.array(vector_list)
 
 
-def move(coordinates, x_move, y_move):
+def move(coordinates, x_move, y_move, z_move):
     coordinates[:,0]+=x_move
     coordinates[:,1]+=y_move
     coordinates[:,2]+=z_move
@@ -93,8 +93,8 @@ def draw(coordinates,color):
     pygame.draw.line(surface, color, (coordinates[2][0], coordinates[2][1]), (coordinates[6][0], coordinates[6][1]))
     pygame.draw.line(surface, color, (coordinates[3][0], coordinates[3][1]), (coordinates[7][0], coordinates[7][1]))
 
-def draw_transformed(location, x_move, y_move, x_scale, y_scale,color,theta):
-    moved = move(location, x_move, y_move)
+def draw_transformed(location, x_move, y_move, z_move, x_scale, y_scale,color,theta):
+    moved = move(location, x_move, y_move, z_move)
     rotated = rotate(moved, theta)
     projected = project(rotated)
     scaled = scale(projected,x_scale,y_scale)
@@ -148,8 +148,8 @@ while game_on:
                  pass
 
     surface.fill(black)
-    draw_transformed(location_first_front, x_move, y_move, x_scale, y_scale, pink,0)
-    draw_transformed(location_first_back, x_move, y_move, x_scale, y_scale, blue,0)
-    draw_transformed(location_second_front, x_move, y_move, x_scale, y_scale, yellow,0)
-    draw_transformed(location_second_back, x_move, y_move, x_scale, y_scale, green,0)
+    draw_transformed(location_first_front, x_move, y_move, z_move, x_scale, y_scale, pink,0)
+    draw_transformed(location_first_back, x_move, y_move, z_move, x_scale, y_scale, blue,0)
+    draw_transformed(location_second_front, x_move, y_move, z_move, x_scale, y_scale, yellow,0)
+    draw_transformed(location_second_back, x_move, y_move, z_move, x_scale, y_scale, green,0)
     pygame.display.update()

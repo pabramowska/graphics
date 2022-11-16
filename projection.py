@@ -20,6 +20,7 @@ location_second_back = np.array([[710, 400, 1.2], [780, 400, 1.2], [710, 500, 1.
 
 #macierz rzutowania
 z_min = 0.1
+d=0.1
 z_max = 1000
 field_of_view = 90
 aspect_ratio = surface_size[1]/surface_size[0]
@@ -69,7 +70,7 @@ def rotate(coordinates, theta):
     for vector in coordinates:
         rotated.append(np.matmul(np.append(vector,1),moy))
     rotated = np.array(rotated)
-    rotated[:,2] /=50
+    rotated[:,2]
     return rotated
 
 def draw(coordinates,color):
@@ -147,8 +148,8 @@ while game_on:
                  pass
 
     surface.fill(black)
-    draw_transformed(location_first_front, x_move, y_move, x_scale, y_scale, pink,0.2)
-    draw_transformed(location_first_back, x_move, y_move, x_scale, y_scale, blue,0.2)
-    draw_transformed(location_second_front, x_move, y_move, x_scale, y_scale, yellow,0.2)
-    draw_transformed(location_second_back, x_move, y_move, x_scale, y_scale, green,0.2)
+    draw_transformed(location_first_front, x_move, y_move, x_scale, y_scale, pink,0)
+    draw_transformed(location_first_back, x_move, y_move, x_scale, y_scale, blue,0)
+    draw_transformed(location_second_front, x_move, y_move, x_scale, y_scale, yellow,0)
+    draw_transformed(location_second_back, x_move, y_move, x_scale, y_scale, green,0)
     pygame.display.update()

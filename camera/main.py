@@ -7,6 +7,7 @@ surface_size = (1200,1000)
 surface = pygame.display.set_mode(surface_size)
 
 async def main():
+
     white = (255,255,255)
     black = (0,0,0)
     blue = (65,105,225)

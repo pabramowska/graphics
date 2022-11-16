@@ -105,7 +105,7 @@ rot_x=0
 game_on=True
 x_scale,y_scale=1,1
 sx,sy=0,0
-rad = 0
+deg = 0
 
 
 while game_on:
@@ -125,8 +125,6 @@ while game_on:
                 y_move = 1
             elif event.key == pygame.K_DOWN:
                 y_move = -1
-            elif event.key == pygame.K_LESS:
-                rot_x += 100
             elif event.key == pygame.K_z:
                 x_scale += 0.1
                 y_scale += 0.1
@@ -148,8 +146,8 @@ while game_on:
                  pass
 
     surface.fill(black)
-    draw_transformed(location_first_front, x_move, y_move, z_move, x_scale, y_scale, pink,0)
-    draw_transformed(location_first_back, x_move, y_move, z_move, x_scale, y_scale, blue,0)
-    draw_transformed(location_second_front, x_move, y_move, z_move, x_scale, y_scale, yellow,0)
-    draw_transformed(location_second_back, x_move, y_move, z_move, x_scale, y_scale, green,0)
+    draw_transformed(location_first_front, x_move, y_move, z_move, x_scale, y_scale, pink,deg)
+    draw_transformed(location_first_back, x_move, y_move, z_move, x_scale, y_scale, blue,deg)
+    draw_transformed(location_second_front, x_move, y_move, z_move, x_scale, y_scale, yellow,deg)
+    draw_transformed(location_second_back, x_move, y_move, z_move, x_scale, y_scale, green,deg)
     pygame.display.update()

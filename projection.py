@@ -9,10 +9,14 @@ white = (255,255,255)
 black = (0,0,0)
 blue = (65,105,225)
 pink = (255,20,147)
+yellow = (255,255,153)
+green = (0,255,0)
 
 #współrzędne obiektów
-location_first = np.array([[550, 400, 0], [620, 400,0], [550, 500,0], [620, 500,0],[550, 400, 1.1], [620, 400,1.1], [550, 500,1.1], [620, 500,1.1]])
-location_second = np.array([[250, 400, 0], [320, 400, 0], [250, 500, 0], [320, 500, 0], [250, 400, 1.1], [320, 400, 1.1], [250, 500, 1.1], [320, 500, 1.1]])
+location_first_front = np.array([[519, 400, 0], [589, 400,0], [519, 500,0], [589, 500,0],[519, 400, 1.1], [589, 400,1.1], [519, 500,1.1], [589, 500,1.1]])
+location_first_back = np.array([[520, 400, 1.2], [590, 400,1.2], [520, 500,1.2], [590, 500,1.2],[520, 400, 1.3], [590, 400,1.3], [520, 500,1.3], [590, 500,1.3]])
+location_second_front = np.array([[709, 400, 0], [779, 400, 0], [709, 500, 0], [779, 500, 0], [709, 400, 1.1], [779, 400, 1.1], [709, 500, 1.1], [779, 500, 1.1]])
+location_second_back = np.array([[710, 400, 1.2], [780, 400, 1.2], [710, 500, 1.2], [780, 500, 1.2], [710, 400, 1.3], [780, 400, 1.3], [710, 500, 1.3], [780, 500, 1.3]])
 camera_location = np.array([0,0,0])
 #macierz rzutowania
 z_min = 0.1
@@ -117,11 +121,15 @@ def project(coordinates):
 
 
 def move(coordinates, x_move, y_move):
-    for vector in coordinates:
-        vector[0]+=x_move
-        vector[1]+=y_move
+    coordinates[:,0]+=x_move
+    coordinates[:,1]+=y_move
     return coordinates
 
+
+def scale(coordinates, scalex, scaley):
+    coordinates[:,0]*=scalex
+    coordinates[:,1]*=scaley
+    return coordinates
 
 def rotate_ox_matrix(theta):
     matrix = np.array([[0.0,0.0,0.0,0.0] for _ in range(4)])
@@ -163,17 +171,23 @@ def draw(coordinates,color):
     pygame.draw.line(surface, color, (coordinates[2][0], coordinates[2][1]), (coordinates[6][0], coordinates[6][1]))
     pygame.draw.line(surface, color, (coordinates[3][0], coordinates[3][1]), (coordinates[7][0], coordinates[7][1]))
 
+def draw_transformed(location, x_move, y_move, x_scale, y_scale,color):
+    moved_location = move(location, x_move, y_move)
+    location_projected = project(moved_location)
+    location_scaled = scale(location_projected,x_scale,y_scale)
+    draw(location_scaled, color)
 
-x_move, y_move, z_move = 0,0,0
+x_move, y_move, z_move = 0,0
 rot_x=0
 game_on=True
+x_scale,y_scale=1,1
+sx,sy=0,0
 
-
-look_direction = np.array([0,0,1])
-up = np.array([0,1,0])
-target = camera_location+look_direction
-camera_matrix = matrix_point_at(camera_location, target, up)
-camera_view = inverse(camera_matrix)
+# look_direction = np.array([0,0,1])
+# up = np.array([0,1,0])
+# target = camera_location+look_direction
+# camera_matrix = matrix_point_at(camera_location, target, up)
+# camera_view = inverse(camera_matrix)
 while game_on:
 
     # obsługa klawiatury
@@ -193,17 +207,23 @@ while game_on:
                 y_move = -1
             elif event.key == pygame.K_LESS:
                 rot_x += 100
+            elif event.key == pygame.K_z:
+                x_scale += 0.2
+                y_scale += 0.2
+            elif event.key == pygame.K_x:
+                x_scale -= 0.2
+                y_scale -= 0.2
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 x_move = 0
             if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
                 y_move = 0
+            if event.key == pygame.K_z or event.key == pygame.K_x:
+                 pass
 
-    moved_first = move(location_first, x_move, y_move)
-    moved_second = move(location_second, x_move, y_move)
-    location_first_projected = project(moved_first)
-    location_second_projected = project(moved_second)
     surface.fill(black)
-    draw(location_first_projected,pink)
-    draw(location_second_projected, blue)
+    draw_transformed(location_first_front, x_move, y_move, x_scale, y_scale, pink)
+    draw_transformed(location_first_back, x_move, y_move, x_scale, y_scale, blue)
+    draw_transformed(location_second_front, x_move, y_move, x_scale, y_scale, yellow)
+    draw_transformed(location_second_back, x_move, y_move, x_scale, y_scale, green)
     pygame.display.update()

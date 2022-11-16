@@ -34,7 +34,7 @@ projection_matrix[3][2] = (-z_max*z_min)/(z_max-z_min)
 
 def multiply_vector_normalized(vector, matrix):
     result_vector = np.matmul(vector,matrix)
-    n = result_vector[3]
+    n = result_vector[2]
     if(n!=0):
         result_vector/= n
     return result_vector
@@ -68,7 +68,9 @@ def rotate(coordinates, theta):
     rotated = []
     for vector in coordinates:
         rotated.append(np.matmul(np.append(vector,1),moy))
-    return np.array(rotated)
+    rotated = np.array(rotated)
+    rotated[:,2] /=50
+    return rotated
 
 def draw(coordinates,color):
 
@@ -145,8 +147,8 @@ while game_on:
                  pass
 
     surface.fill(black)
-    draw_transformed(location_first_front, x_move, y_move, x_scale, y_scale, pink,rad)
-    draw_transformed(location_first_back, x_move, y_move, x_scale, y_scale, blue,rad)
-    draw_transformed(location_second_front, x_move, y_move, x_scale, y_scale, yellow,0)
-    draw_transformed(location_second_back, x_move, y_move, x_scale, y_scale, green,rad)
+    draw_transformed(location_first_front, x_move, y_move, x_scale, y_scale, pink,0.2)
+    draw_transformed(location_first_back, x_move, y_move, x_scale, y_scale, blue,0.2)
+    draw_transformed(location_second_front, x_move, y_move, x_scale, y_scale, yellow,0.2)
+    draw_transformed(location_second_back, x_move, y_move, x_scale, y_scale, green,0.2)
     pygame.display.update()

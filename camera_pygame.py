@@ -14,7 +14,7 @@ white = (255,20,147)
 black=(0,0,0)
 #lokalizacja prostopadłościanów w układzie współrzędnych
 locations = [[250,400],[550,400]]
-size = [70, 100]
+size = [100, 70]
 scale = 1
 
 #          !!!!WAŻNE!!!!

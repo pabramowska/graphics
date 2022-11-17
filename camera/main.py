@@ -1,6 +1,6 @@
 import asyncio
-import numpy as np
 import pygame
+import math
 
 pygame.init()
 surface_size = (1200,1000)
@@ -16,17 +16,24 @@ async def main():
     green = (0,255,0)
 
     #współrzędne obiektów
-    location_first_front = np.array([[519, 600, 1.5], [589, 600,1.5], [519, 700,1.5], [589, 700,1.5],[519, 600, 1.6], [589, 600,1.6], [519, 700,1.6], [589, 700,1.6]])
-    location_first_back = np.array([[520, 600, 1.2], [590, 600,1.2], [520, 700,1.2], [590, 700,1.2],[520, 600, 1.3], [590, 600,1.3], [520, 700,1.3], [590, 700,1.3]])
-    location_second_front = np.array([[709, 600,1.5], [779, 600, 1.5], [709, 700, 1.5], [779, 700, 1.5], [709, 600, 1.6], [779, 600, 1.6], [709, 700, 1.6], [779, 700, 1.6]])
-    location_second_back = np.array([[710, 600, 1.2], [780, 600, 1.2], [710, 700, 1.2], [780, 700, 1.2], [710, 600, 1.3], [780, 600, 1.3], [710, 700, 1.3], [780, 700, 1.3]])
+    location_first_front = [[519, 600, 1.5], [589, 600,1.5], [519, 700,1.5], [589, 700,1.5],[519, 600, 1.6], [589, 600,1.6], [519, 700,1.6], [589, 700,1.6]]
+    location_first_back = [[520, 600, 1.2], [590, 600,1.2], [520, 700,1.2], [590, 700,1.2],[520, 600, 1.3], [590, 600,1.3], [520, 700,1.3], [590, 700,1.3]]
+    location_second_front = [[709, 600,1.5], [779, 600, 1.5], [709, 700, 1.5], [779, 700, 1.5], [709, 600, 1.6], [779, 600, 1.6], [709, 700, 1.6], [779, 700, 1.6]]
+    location_second_back = [[710, 600, 1.2], [780, 600, 1.2], [710, 700, 1.2], [780, 700, 1.2], [710, 600, 1.3], [780, 600, 1.3], [710, 700, 1.3], [780, 700, 1.3]]
 
 
     def multiply_vector_normalized(vector, matrix):
-        result_vector = np.matmul(vector,matrix)
-        n = result_vector[2]
-        if(n!=0):
-            result_vector/= n
+        result_vector = [0, 0, 0]
+        result_vector[0] = vector[0] * matrix[0][0] + vector[1] * matrix[1][0] + vector[2] * matrix[2][0] + matrix[3][0]
+        result_vector[1] = vector[0] * matrix[0][1] + vector[1] * matrix[1][1] + vector[2] * matrix[2][1] + matrix[3][1]
+        result_vector[2] = vector[0] * matrix[0][2] + vector[1] * matrix[1][2] + vector[2] * matrix[2][2] + matrix[3][2]
+        n = vector[0] * matrix[0][3] + vector[1] * matrix[1][3] + vector[2] * matrix[2][3] + matrix[3][3]
+
+        if (n != 0):
+            result_vector[0] /= n
+            result_vector[1] /= n
+            result_vector[2] /= n
+
         return result_vector
 
 
@@ -37,8 +44,8 @@ async def main():
         z_max = 1000
         field_of_view =  95
         aspect_ratio = surface_size[1] / surface_size[0]
-        field_of_view_rad = 1 / np.tan(np.deg2rad(field_of_view / 2))
-        projection_matrix = np.array([[0.0, 0.0, 0.0, 0.0] for _ in range(4)])
+        field_of_view_rad = 1 / math.tan((field_of_view / 2)*math.pi/180)
+        projection_matrix = [[0.0, 0.0, 0.0, 0.0] for _ in range(4)]
         projection_matrix[0][0] = aspect_ratio * field_of_view_rad
         projection_matrix[1][1] = field_of_view_rad
         projection_matrix[2][2] = z_max / (z_max - z_min)
@@ -48,31 +55,33 @@ async def main():
 
         for vector in coordinates:
             vector_list.append(multiply_vector_normalized(vector,projection_matrix))
-        return np.array(vector_list)
+        return vector_list
 
 
     def move(coordinates, x_move, y_move, z_move):
-        coordinates[:,0]+=x_move
-        coordinates[:,1]+=y_move
-        coordinates[:,2]+=z_move
+        for vector in coordinates:
+            vector[0]+=x_move
+            vector[1]+=y_move
+            vector[2]+=z_move
         return coordinates
 
 
     def scale(coordinates, scalex, scaley):
-        coordinates[:,0]*=scalex
-        coordinates[:,1]*=scaley
+        for vector in coordinates:
+            vector[0]*=scalex
+            vector[1]*=scaley
         return coordinates
 
     def rotate(coordinates, theta):
-        moy = np.array([
-            [np.cos(theta), 0, np.sin(theta), 0],
+        moy = [
+            [math.cos(theta), 0, math.sin(theta), 0],
             [0, 1, 0, 0],
-            [-np.sin(theta), 0, np.cos(theta), 0],
-            [0, 0, 0, 1]])
+            [-math.sin(theta), 0, math.cos(theta), 0],
+            [0, 0, 0, 1]]
         rotated = []
         for vector in coordinates:
-            rotated.append(np.matmul(np.append(vector,1),moy))
-        rotated = np.array(rotated)
+            mul_vector = vector.append(1)
+            rotated.append(multiply_vector_normalized(mul_vector,moy))
         return rotated
 
     def draw(coordinates,color):
@@ -97,16 +106,14 @@ async def main():
 
     def draw_transformed(location, x_move, y_move, z_move, x_scale, y_scale,color,theta):
         moved = move(location, x_move, y_move, z_move)
-        rotated = rotate(moved, theta)
-        projected = project(rotated)
+        #rotated = rotate(moved, theta)
+        projected = project(moved)
         scaled = scale(projected,x_scale,y_scale)
         draw(scaled, color)
 
     x_move, y_move, z_move = 0,0,0
-    rot_x=0
     game_on=True
     x_scale,y_scale=1,1
-    sx,sy=0,0
     deg = 0
 
 

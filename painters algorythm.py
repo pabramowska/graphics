@@ -9,7 +9,7 @@ surface = pygame.display.set_mode(surface_size)
 
 
 
-white = (255,255,255)
+color = [255,255,255]
 black = (0,0,0)
 blue = (65,105,225)
 pink = (255,20,147)
@@ -17,7 +17,7 @@ yellow = (255,255,153)
 green = (0,255,0)
 
 #współrzędne obiektów
-location_first_front = np.array([[519, 600, 1.2], [589, 600,1.2], [519, 700,1.2], [589, 700,1.2],[519, 600, 1.3], [589, 600,1.3], [519, 700,1.3], [589, 700,1.3]])
+location_first_front = np.array([[519, 600, 1.21], [589, 600,1.21], [519, 700,1.21], [589, 700,1.21],[519, 600, 1.3], [589, 600,1.3], [519, 700,1.3], [589, 700,1.3]])
 location_first_back = np.array([[520, 600,1.31], [650, 600,1.31], [520, 650,1.31], [650, 650,1.31], [520, 600,1.5], [650, 600,1.5], [520, 650,1.5], [650, 650,1.5]])
 location_second_front = np.array([[709, 600,1.2], [779, 600, 1.2], [709, 700, 1.2], [779, 700, 1.2], [709, 600, 1.3], [779, 600, 1.3], [709, 700, 1.3], [779, 700, 1.3]])
 location_second_back = np.array([[710, 600, 1.5], [780, 600, 1.5], [710, 700, 1.5], [780, 700, 1.5], [710, 600, 1.6], [780, 600, 1.6], [710, 700, 1.6], [780, 700, 1.6]])
@@ -89,11 +89,28 @@ def draw(coordinates,color):
                                     (coordinates[7][0], coordinates[7][1]), (coordinates[6][0], coordinates[6][1])],
                                     color)
 
-        #boki
-    pygame.draw.line(surface, color, (coordinates[0][0], coordinates[0][1]),(coordinates[4][0], coordinates[4][1]))
-    pygame.draw.line(surface, color, (coordinates[1][0], coordinates[1][1]), (coordinates[5][0], coordinates[5][1]))
-    pygame.draw.line(surface, color, (coordinates[2][0], coordinates[2][1]), (coordinates[6][0], coordinates[6][1]))
-    pygame.draw.line(surface, color, (coordinates[3][0], coordinates[3][1]), (coordinates[7][0], coordinates[7][1]))
+    #lewy bok
+
+    pygame.gfxdraw.filled_polygon(surface,
+                                  [(coordinates[0][0], coordinates[0][1]), (coordinates[4][0], coordinates[4][1]),
+                                   (coordinates[6][0], coordinates[6][1]), (coordinates[2][0], coordinates[2][1])],
+                                   color)
+
+    pygame.gfxdraw.filled_polygon(surface,
+                                    [(coordinates[1][0], coordinates[1][1]), (coordinates[3][0], coordinates[3][1]),
+                                    (coordinates[7][0], coordinates[7][1]), (coordinates[5][0], coordinates[5][1])],
+                                    color)
+
+    pygame.gfxdraw.filled_polygon(surface,
+                                    [(coordinates[0][0], coordinates[0][1]), (coordinates[1][0], coordinates[1][1]),
+                                    (coordinates[5][0], coordinates[5][1]), (coordinates[4][0], coordinates[4][1])],
+                                    color)
+
+    pygame.gfxdraw.filled_polygon(surface,
+                                    [(coordinates[2][0], coordinates[2][1]), (coordinates[3][0], coordinates[3][1]),
+                                    (coordinates[7][0], coordinates[7][1]), (coordinates[6][0], coordinates[6][1])],
+                                    color)
+
 
 def draw_transformed(location, x_move, y_move, z_move, x_scale, y_scale,color,theta):
     moved = move(location, x_move, y_move, z_move)
@@ -106,6 +123,16 @@ x_move, y_move, z_move = 0,0,0
 game_on=True
 x_scale,y_scale=1,1
 deg = 0
+min_z = dict()
+
+def find_min(coordinates):
+    min_z[min(coordinates[:,2])] = coordinates
+
+find_min(location_first_front)
+find_min(location_first_back)
+find_min(location_second_front)
+find_min(location_second_back)
+
 
 
 while game_on:
@@ -146,9 +173,19 @@ while game_on:
                 pass
 
     surface.fill(black)
-    draw_transformed(location_first_front, x_move, y_move, z_move, x_scale, y_scale, pink,deg)
-    draw_transformed(location_first_back, x_move, y_move, z_move, x_scale, y_scale, blue,deg)
-    draw_transformed(location_second_front, x_move, y_move, z_move, x_scale, y_scale, yellow,deg)
-    draw_transformed(location_second_back, x_move, y_move, z_move, x_scale, y_scale, green,deg)
+    current_z = sorted(min_z, reverse=True)[0]
+    draw_transformed(min_z[current_z], x_move, y_move, z_move, x_scale, y_scale, pink, deg)
+
+
+    current_z = sorted(min_z, reverse=True)[1]
+    draw_transformed(min_z[current_z], x_move, y_move, z_move, x_scale, y_scale, yellow, deg)
+
+
+    current_z = sorted(min_z, reverse=True)[2]
+    draw_transformed(min_z[current_z], x_move, y_move, z_move, x_scale, y_scale, green, deg)
+
+    current_z = sorted(min_z, reverse=True)[3]
+    draw_transformed(min_z[current_z], x_move, y_move, z_move, x_scale, y_scale, blue, deg)
+
     pygame.display.update()
 
